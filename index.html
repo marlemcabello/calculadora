@@ -558,7 +558,7 @@ function buildFila(parent, s) {
   /* controles — segunda fila */
   html += '<div class="fila-ctrl">';
 
-  /* botones SET / Una (con precio editable) */
+  /* botones SET / Uña (con precio editable) */
   html += '<div class="mode-btns">';
   if (!isExtra) {
     html +=
@@ -571,7 +571,7 @@ function buildFila(parent, s) {
   if (s.pi > 0) {
     html +=
       '<div class="mode-card' + (modeS === 'una' ? ' act' : '') + '" id="buna-' + s.id + '-c">' +
-        '<button class="mode-lbl-btn" id="buna-' + s.id + '" type="button">Una</button>' +
+        '<button class="mode-lbl-btn" id="buna-' + s.id + '" type="button">Uña</button>' +
         '<input class="mode-px-inp" type="number" inputmode="numeric" min="0"' +
           ' id="pxu-' + s.id + '" value="' + s.pi + '">' +
       '</div>';
@@ -640,13 +640,13 @@ function buildFila(parent, s) {
   }
 }
 
-/* Cambio de modo SET / Una */
+/* Cambio de modo SET / Uña */
 function setMode(id, m) {
   mode[id] = m;
   var cardSet = document.getElementById('bset-' + id + '-c');
-  var cardUna = document.getElementById('buna-' + id + '-c');
+  var cardUña = document.getElementById('buna-' + id + '-c');
   if (cardSet) cardSet.className = 'mode-card' + (m === 'set' ? ' act' : '');
-  if (cardUna) cardUna.className = 'mode-card' + (m === 'una' ? ' act' : '');
+  if (cardUña) cardUña.className = 'mode-card' + (m === 'una' ? ' act' : '');
   var q = qty[id];
   if (q > 0) {
     var p   = getPxActivo(id);
@@ -693,7 +693,7 @@ function buildPrecios(el) {
         if (s.pi > 0) {
           doble +=
             '<div class="prec-grp">' +
-              '<span class="prec-grp-lbl">Una</span>' +
+              '<span class="prec-grp-lbl">Uña</span>' +
               '<div class="prec-inp-wrap">' +
                 '<span class="prec-signo">$</span>' +
                 '<input class="prec-inp' + (piCustom ? ' custom' : '') + '" type="number" inputmode="numeric" min="0" id="pinp-pi-' + s.id + '" value="' + s.pi + '">' +
