@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora · Manicurista a Jefa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rosa-palo:       #E8B4B8;
+      --rosa-polvo:      #DBA090;
+      --rosa-frambuesa:  #C46478;
+      --dorado:          #C9A96E;
+      --crema:           #F5E6D3;
+      --vino:            #3D1A1A;
+      --blanco:          #FFFFFF;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--crema);
+      color: var(--vino);
+      padding-bottom: 110px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 0%, #FFFFFF 0%, transparent 55%),
+        radial-gradient(ellipse 55% 55% at 88% 90%, #DBA090 0%, transparent 50%),
+        var(--rosa-palo);
+      text-align: center;
+      padding: 24px 16px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* anillo decorativo */
+    .header::before {
+      content: '';
+      position: absolute;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      border: 1px solid rgba(61,26,26,.12);
+      top: -60px; right: -40px;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 1px solid rgba(61,26,26,.08);
+      bottom: -30px; left: -20px;
+    }
+    .hdr-sistema {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--vino);
+      opacity: .55;
+      margin-bottom: 6px;
+    }
+    .hdr-titulo {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--vino);
+    }
+    .hdr-titulo em {
+      font-style: italic;
+      color: var(--rosa-frambuesa);
+      display: block;
+    }
+    /* línea decorativa degradado */
+    .hdr-linea {
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--dorado), transparent);
+      margin: 10px auto 0;
+    }
+
+    /* ── PESTAÑAS ── */
+    .tabs-wrap {
+      background: var(--vino);
+      padding: 9px 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tabs-wrap::-webkit-scrollbar { display: none; }
+
+    .tab {
+      display: inline-block;
+      padding: 7px 13px;
+      border-radius: 8px;
+      border: 1px solid rgba(201,169,110,.25);
+      background: transparent;
+      color: rgba(245,230,211,.55);
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-right: 6px;
+      white-space: nowrap;
+      position: relative;
+      -webkit-appearance: none;
+      vertical-align: middle;
+    }
+    .tab.active       { background: var(--rosa-frambuesa); border-color: var(--rosa-frambuesa); color: var(--crema); }
+    .tab.tab-util     { border-style: dashed; border-color: rgba(219,160,144,.45); color: rgba(232,180,184,.7); }
+    .tab.tab-util.active { background: var(--rosa-polvo); border-color: var(--rosa-polvo); border-style: solid; color: var(--vino); }
+
+    .tab-bdg {
+      display: none;
+      position: absolute;
+      top: -5px; right: -4px;
+      background: var(--dorado);
+      color: var(--vino);
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 1px 5px;
+      min-width: 16px;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .tab-bdg.on { display: block; }
+
+    /* ── CONTENIDO ── */
+    .content { padding: 12px 13px 0; max-width: 480px; margin: 0 auto; }
+
+    .grupo-sep {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--rosa-polvo);
+      margin: 16px 2px 6px;
+      display: -webkit-flex; display: flex;
+      -webkit-align-items: center; align-items: center;
+      gap: 10px;
+    }
+    .grupo-sep::after {
+      content: '';
+      -webkit-flex: 1; flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--rosa-palo), transparent);
+    }
+
+    /* ── FILA CALCULADORA ── */
+    .fila {
+      background: var(--blanco);
+      border-radius: 16px;
+      padding: 11px 14px;
+      margin-bottom: 6px;
+      box-shadow: 0 2px 12px rgba(61,26,26,.06);
+      display: -webkit-flex; display: flex;
+      -webkit-align-items: center; align-items: center;
+      gap: 8px;
+    }
+    .fila.on {
+      background: var(--blanco);
+      border-left: 3px solid var(--rosa-frambuesa);
+      box-shadow: 0 4px 16px rgba(61,26,26,.09);
+    }
+
+    .fila-info { -webkit-flex: 1; flex: 1; min-width: 0; }
+    .fila-nombre {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--vino);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* precio editable inline */
+    .fila-px-wrap {
+      display: -webkit-flex; display: flex;
+      -webkit-align-items: center; align-items: center;
+      gap: 2px; margin-top: 3px;
+    }
+    .px-signo { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--rosa-polvo); }
+    .px-inp {
+      width: 46px; background: none; border: none;
+      border-bottom: 1.5px solid transparent;
+      color: var(--rosa-polvo);
+      font-family: 'Inter', sans-serif; font-size: 11px;
+      padding: 0 2px 1px; outline: none;
+      -webkit-appearance: none; -moz-appearance: textfield;
+    }
+    .px-inp:focus { border-bottom-color: var(--rosa-frambuesa); color: var(--rosa-frambuesa); }
+    .px-inp.custom { color: var(--rosa-frambuesa); }
+    .px-label { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--rosa-polvo); }
+    .px-dot { font-size: .45rem; color: var(--rosa-frambuesa); margin-left: 3px; display: none; }
+    .px-dot.on { display: inline; }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    .fila-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 600;
+      color: var(--rosa-frambuesa);
+      min-width: 52px; text-align: right;
+      -webkit-flex-shrink: 0; flex-shrink: 0;
+    }
+    .fila-sub.vacio {
+      color: var(--rosa-palo);
+      font-weight: 300; font-size: 12px;
+    }
+
+    /* ── CONTADOR ── */
+    .ctr {
+      display: -webkit-flex; display: flex;
+      -webkit-align-items: center; align-items: center;
+      -webkit-flex-shrink: 0; flex-shrink: 0;
+    }
+    .cb {
+      width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+      font-size: 1.15rem;
+      display: -webkit-flex; display: flex;
+      -webkit-align-items: center; align-items: center;
+      -webkit-justify-content: center; justify-content: center;
+      -webkit-user-select: none; user-select: none; -webkit-appearance: none;
+    }
+    .cb.m { background: var(--crema); color: var(--rosa-polvo); border: 1.5px solid var(--rosa-palo); }
+    .cb.p { background: var(--rosa-frambuesa); color: var(--crema); }
+    .cn {
+      width: 28px; text-align: center;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
+      color: var(--vino); background: none; border: none; outline: none;
+      -webkit-appearance: none;
+    }
+
+    /* ── BOTÓN LIMPIAR ── */
+    .wrap-extra { padding: 10px 13px 0; max-width: 480px; margin: 0 auto; }
+    .btn-sec {
+      display: block; width: 100%; background: none;
+      border: 1.5px solid var(--rosa-palo); border-radius: 8px;
+      padding: 12px;
+      color: var(--rosa-polvo);
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500;
+      letter-spacing: 3px; text-transform: uppercase;
+      cursor: pointer; -webkit-appearance: none;
+    }
+
+    /* ── TOTAL FIJO ABAJO ── */
+    #total-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background:
+        radial-gradient(ellipse 70% 80% at 0% 50%, #E8B4B8 0%, transparent 60%),
+        var(--rosa-frambuesa);
+      padding: 12px 20px 16px;
+      box-shadow: 0 -4px 24px rgba(61,26,26,.28);
+      z-index: 100;
+    }
+    .total-inner {
+      max-width: 480px; margin: 0 auto;
+      display: -webkit-flex; display: flex;
+      -webkit-align-items: center; align-items: center;
+      -webkit-justify-content: space-between; justify-content: space-between;
+    }
+    .tl-lbl {
+      font-family: 'Inter', sans-serif; font-size: 9px;
+      font-weight: 500; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(201,169,110,.9);
+    }
+    .tl-res {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 300;
+      color: rgba(245,230,211,.6); margin-top: 3px;
+      max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tl-monto {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2rem; font-weight: 700;
+      color: var(--crema);
+    }
+
+    /* ── PESTAÑA PRECIOS ── */
+    .prec-aviso {
+      background: rgba(196,100,120,.08);
+      border-left: 3px solid var(--rosa-polvo);
+      border-radius: 0 12px 12px 0;
+      padding: 10px 14px; margin-bottom: 10px;
+      font-family: 'Inter', sans-serif; font-size: 13px;
+      color: var(--vino); line-height: 1.6;
+    }
+    .prec-fila {
+      background: var(--blanco); border-radius: 16px;
+      padding: 11px 14px; margin-bottom: 6px;
+      box-shadow: 0 2px 10px rgba(61,26,26,.05);
+      display: -webkit-flex; display: flex;
+      -webkit-align-items: center; align-items: center; gap: 8px;
+    }
+    .prec-nombre { -webkit-flex: 1; flex: 1; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--vino); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .prec-orig   { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--rosa-polvo); }
+    .prec-inp-wrap { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 3px; -webkit-flex-shrink: 0; flex-shrink: 0; }
+    .prec-signo  { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--vino); }
+    .prec-inp {
+      width: 58px; background: var(--crema);
+      border: 1.5px solid var(--rosa-palo);
+      border-radius: 8px; color: var(--vino);
+      font-family: 'Inter', sans-serif; font-size: 14px;
+      font-weight: 500; text-align: center;
+      padding: 5px 4px; outline: none;
+      -webkit-appearance: none; -moz-appearance: textfield;
+    }
+    .prec-inp:focus { border-color: var(--rosa-frambuesa); color: var(--rosa-frambuesa); }
+    .prec-inp.custom { border-color: var(--rosa-polvo); color: var(--rosa-polvo); background: #FAE8EC; }
+
+    /* ── RESUMEN ── */
+    .res-vacio { text-align: center; padding: 50px 20px; color: var(--rosa-palo); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.8; }
+    .res-icon  { font-size: 2.4rem; margin-bottom: 12px; }
+    .res-cat-hdr {
+      font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 500;
+      letter-spacing: 4px; text-transform: uppercase; color: var(--rosa-polvo);
+      margin: 16px 2px 6px;
+      display: -webkit-flex; display: flex;
+      -webkit-align-items: center; align-items: center; gap: 8px;
+    }
+    .res-cat-hdr::after { content: ''; -webkit-flex: 1; flex: 1; height: 1px; background: linear-gradient(90deg, var(--rosa-palo), transparent); }
+    .res-fila {
+      background: var(--blanco); border-radius: 16px; padding: 11px 14px; margin-bottom: 6px;
+      box-shadow: 0 2px 10px rgba(61,26,26,.05);
+      display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 8px;
+    }
+    .res-nombre { -webkit-flex: 1; flex: 1; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--vino); }
+    .res-unit   { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--rosa-polvo); }
+    .res-sub    { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--rosa-frambuesa); min-width: 60px; text-align: right; -webkit-flex-shrink: 0; flex-shrink: 0; }
+    .res-total-card {
+      background:
+        radial-gradient(ellipse 70% 80% at 0% 50%, #E8B4B8 0%, transparent 60%),
+        var(--rosa-frambuesa);
+      border-radius: 20px; padding: 20px 22px; margin-top: 18px;
+      box-shadow: 0 8px 32px rgba(61,26,26,.18);
+      display: -webkit-flex; display: flex;
+      -webkit-align-items: center; align-items: center;
+      -webkit-justify-content: space-between; justify-content: space-between;
+    }
+    .res-total-lbl  { font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: rgba(201,169,110,.9); }
+    .res-total-info { font-family: 'Inter', sans-serif; font-size: 11px; color: rgba(245,230,211,.5); margin-top: 2px; }
+    .res-total-monto{ font-family: 'Playfair Display', Georgia, serif; font-size: 2rem; font-weight: 700; color: var(--crema); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hdr-sistema">Sistema Manicurista a Jefa</div>
+  <div class="hdr-titulo">Calculadora<em>de Servicios</em></div>
+  <div class="hdr-linea"></div>
+</div>
+
+<div class="tabs-wrap" id="tabs-wrap"></div>
+<div class="content"   id="content"></div>
+<div class="wrap-extra" id="wrap-extra">
+  <button class="btn-sec" id="btn-limpiar">Limpiar todo</button>
+</div>
+
+<div id="total-bar">
+  <div class="total-inner">
+    <div>
+      <div class="tl-lbl">Total</div>
+      <div class="tl-res" id="tl-res">Sin servicios seleccionados</div>
+    </div>
+    <div class="tl-monto" id="tl-monto">$0</div>
+  </div>
+</div>
+
+<script>
+/* Formato de numero sin Intl */
+function fmt(n) {
+  var s = String(Math.round(n));
+  var r = '';
+  for (var k = 0; k < s.length; k++) {
+    if (k > 0 && (s.length - k) % 3 === 0) r += ',';
+    r += s[k];
+  }
+  return r;
+}
+
+/* --- DATOS --- */
+var CATS = [
+  { id:'gel',      label:'GEL',        util:false },
+  { id:'rubber',   label:'RUBBER',     util:false },
+  { id:'acrilico', label:'ACRILICO',   util:false },
+  { id:'retiros',  label:'RETIROS',    util:false },
+  { id:'retoques', label:'RETOQUES',   util:false },
+  { id:'manicure', label:'MANICURE',   util:false },
+  { id:'extras',   label:'EXTRAS',     util:false },
+  { id:'precios',  label:'PRECIOS',    util:true  },
+  { id:'resumen',  label:'RESUMEN',    util:true  }
+];
+
+var S = [
+  /* -- GEL -- */
+  {id:'g01',cat:'gel',     grp:'Liso',       nom:'Gel liso',                        px:170},
+  {id:'g02',cat:'gel',     grp:'Basico',     nom:'Diseno Basico',                   px:200},
+  {id:'g03',cat:'gel',     grp:'Intermedio', nom:'Intermedio - Dibujos',            px:250},
+  {id:'g04',cat:'gel',     grp:'Intermedio', nom:'Intermedio - Difuminado',         px:270},
+  {id:'g05',cat:'gel',     grp:'Intermedio', nom:'Intermedio - Doble French',       px:270},
+  {id:'g06',cat:'gel',     grp:'Intermedio', nom:'Intermedio - Efecto',             px:240},
+  {id:'g07',cat:'gel',     grp:'Intermedio', nom:'Intermedio - French',             px:270},
+  {id:'g08',cat:'gel',     grp:'Intermedio', nom:'Intermedio - Lineas diversas',    px:270},
+  {id:'g09',cat:'gel',     grp:'Intermedio', nom:'Intermedio - Ojo de Gato',        px:240},
+  {id:'g10',cat:'gel',     grp:'Elaborado',  nom:'Elaborado - Dibujos',             px:300},
+  {id:'g11',cat:'gel',     grp:'Nail Art',   nom:'Nail Art - Alto detalle',         px:480},
+  /* -- RUBBER -- */
+  {id:'r01',cat:'rubber',  grp:'',           nom:'Rubber',                          px:200},
+  /* -- ACRILICO -- */
+  {id:'a01',cat:'acrilico',grp:'',           nom:'Bano de acrilico',                px:300},
+  {id:'a02',cat:'acrilico',grp:'Extension',  nom:'Extension Natural (sin gel)',      px:460},
+  {id:'a03',cat:'acrilico',grp:'Extension',  nom:'Extension Poligel (sin gel)',      px:630},
+  {id:'a04',cat:'acrilico',grp:'Extension',  nom:'Extension Babyboomer (sin gel)',   px:500},
+  /* -- RETIROS -- */
+  {id:'re1',cat:'retiros', grp:'',           nom:'Retiro de acrilico',              px:160},
+  {id:'re2',cat:'retiros', grp:'',           nom:'Retiro de gel con acetona',        px:100},
+  {id:'re3',cat:'retiros', grp:'',           nom:'Retiro de gel',                    px:60 },
+  {id:'re4',cat:'retiros', grp:'',           nom:'Retiro de Rubber',                 px:90 },
+  /* -- RETOQUES -- */
+  {id:'rq1',cat:'retoques',grp:'',           nom:'Retoque de acrilico',             px:270},
+  {id:'rq2',cat:'retoques',grp:'',           nom:'Retoque de Rubber',                px:120},
+  {id:'rq3',cat:'retoques',grp:'',           nom:'Retoque de Poligel',              px:120},
+  /* -- MANICURE -- */
+  {id:'m01',cat:'manicure',grp:'',           nom:'Manicure Express',                 px:160},
+  {id:'m02',cat:'manicure',grp:'',           nom:'Manicure SPA',                     px:330},
+  /* -- EXTRAS -- */
+  {id:'e01',cat:'extras',  grp:'Relieve',    nom:'Relieve - Sin efecto',             px:100},
+  {id:'e02',cat:'extras',  grp:'Relieve',    nom:'Relieve - Con efecto o color',     px:150},
+  {id:'e03',cat:'extras',  grp:'Relieve 3D', nom:'Figura 3D - Sin efecto',           px:150},
+  {id:'e04',cat:'extras',  grp:'Relieve 3D', nom:'Figura 3D - Con efecto o color',   px:200},
+  {id:'e05',cat:'extras',  grp:'Piedras',    nom:'Piedra chica',                     px:50 },
+  {id:'e06',cat:'extras',  grp:'Piedras',    nom:'Piedra mediana',                   px:80 },
+  {id:'e07',cat:'extras',  grp:'Piedras',    nom:'Piedra grande',                    px:100},
+  {id:'e08',cat:'extras',  grp:'Encapsulado',nom:'Encapsulado con acrilico',         px:350},
+  {id:'e09',cat:'extras',  grp:'Encapsulado',nom:'Encapsulado con Gel / Press On',   px:350},
+  {id:'e10',cat:'extras',  grp:'Otros',      nom:'Largo Extra (Acrilico o Poligel)', px:50 }
+];
+
+/* Precios originales */
+var DEF = {};
+var di;
+for (di = 0; di < S.length; di++) DEF[S[di].id] = S[di].px;
+
+/* Estado */
+var qty = {}, ov = {};
+var qi;
+for (qi = 0; qi < S.length; qi++) qty[S[qi].id] = 0;
+var CAT = 'gel';
+
+function getPx(id) { return (ov[id] !== undefined) ? ov[id] : getSvc(id).px; }
+function getSvc(id) {
+  for (var i = 0; i < S.length; i++) if (S[i].id === id) return S[i];
+}
+
+/* --- TABS --- */
+function renderTabs() {
+  var wrap = document.getElementById('tabs-wrap');
+  wrap.innerHTML = '';
+  for (var i = 0; i < CATS.length; i++) {
+    var c = CATS[i];
+    var btn = document.createElement('button');
+    var cls = 'tab';
+    if (c.util)       cls += ' tab-util';
+    if (c.id === CAT) cls += ' active';
+    btn.className = cls;
+    btn.id = 'tab-' + c.id;
+
+    /* badge */
+    var n = 0;
+    if (c.id === 'resumen') {
+      for (var j = 0; j < S.length; j++) if (qty[S[j].id] > 0) n++;
+    } else if (!c.util) {
+      for (var j = 0; j < S.length; j++) if (S[j].cat === c.id) n += qty[S[j].id];
+    }
+    var bdgCls = 'tab-bdg' + (n > 0 ? ' on' : '');
+    btn.innerHTML = c.label + (c.id !== 'precios' ? '<span class="' + bdgCls + '">' + n + '</span>' : '');
+
+    (function(cid) { btn.addEventListener('click', function() { setTab(cid); }); })(c.id);
+    wrap.appendChild(btn);
+  }
+}
+
+function updBadge(catId) {
+  var btn = document.getElementById('tab-' + catId);
+  if (!btn) return;
+  var bdg = btn.querySelector('.tab-bdg');
+  if (!bdg) return;
+  var n = 0;
+  if (catId === 'resumen') {
+    for (var i = 0; i < S.length; i++) if (qty[S[i].id] > 0) n++;
+  } else {
+    for (var i = 0; i < S.length; i++) if (S[i].cat === catId) n += qty[S[i].id];
+  }
+  bdg.textContent = n;
+  bdg.className = 'tab-bdg' + (n > 0 ? ' on' : '');
+  var rb = document.getElementById('tab-resumen');
+  if (rb) {
+    var rbdg = rb.querySelector('.tab-bdg');
+    if (rbdg) {
+      var rn = 0;
+      for (var i = 0; i < S.length; i++) if (qty[S[i].id] > 0) rn++;
+      rbdg.textContent = rn;
+      rbdg.className = 'tab-bdg' + (rn > 0 ? ' on' : '');
+    }
+  }
+}
+
+/* --- NAVEGACION --- */
+function setTab(id) {
+  CAT = id;
+  renderTabs();
+  renderContent();
+  var we = document.getElementById('wrap-extra');
+  if (we) we.style.display = (id === 'precios') ? 'none' : '';
+  window.scrollTo(0, 0);
+}
+
+/* --- CONTENIDO --- */
+function renderContent() {
+  var c = document.getElementById('content');
+  c.innerHTML = '';
+  if      (CAT === 'resumen') buildResumen(c);
+  else if (CAT === 'precios') buildPrecios(c);
+  else                        buildCalc(c);
+}
+
+/* Calculadora */
+function buildCalc(el) {
+  var svcs = [];
+  for (var i = 0; i < S.length; i++) if (S[i].cat === CAT) svcs.push(S[i]);
+
+  var grps = [];
+  for (var i = 0; i < svcs.length; i++) {
+    if (grps.indexOf(svcs[i].grp) === -1) grps.push(svcs[i].grp);
+  }
+
+  for (var gi = 0; gi < grps.length; gi++) {
+    var g = grps[gi];
+    if (g) {
+      var sep = document.createElement('div');
+      sep.className = 'grupo-sep';
+      sep.textContent = g;
+      el.appendChild(sep);
+    }
+    for (var si = 0; si < svcs.length; si++) {
+      if (svcs[si].grp === g) buildFila(el, svcs[si]);
+    }
+  }
+}
+
+function buildFila(parent, s) {
+  var px     = getPx(s.id);
+  var custom = ov[s.id] !== undefined;
+  var q      = qty[s.id];
+  var sub    = q > 0 ? '$' + fmt(q * px) : '&mdash;';
+  var subCls = q > 0 ? 'fila-sub' : 'fila-sub vacio';
+
+  var d = document.createElement('div');
+  d.className = 'fila' + (q > 0 ? ' on' : '');
+  d.id = 'fila-' + s.id;
+  d.innerHTML =
+    '<div class="fila-info">' +
+      '<div class="fila-nombre">' + s.nom + '</div>' +
+      '<div class="fila-px-wrap">' +
+        '<span class="px-signo">$</span>' +
+        '<input class="px-inp' + (custom ? ' custom' : '') + '" type="number" inputmode="numeric" min="0"' +
+          ' id="px-' + s.id + '" value="' + px + '">' +
+        '<span class="px-label">&nbsp;por servicio</span>' +
+        '<span class="px-dot' + (custom ? ' on' : '') + '" id="dot-' + s.id + '">&#9679;</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="ctr">' +
+      '<button class="cb m" id="bm-' + s.id + '" type="button">&#8722;</button>' +
+      '<input class="cn" type="number" inputmode="numeric" min="0" max="99"' +
+        ' id="cn-' + s.id + '" value="' + q + '">' +
+      '<button class="cb p" id="bp-' + s.id + '" type="button">&#43;</button>' +
+    '</div>' +
+    '<div class="' + subCls + '" id="sub-' + s.id + '">' + sub + '</div>';
+
+  parent.appendChild(d);
+
+  var id = s.id;
+  document.getElementById('bm-' + id).addEventListener('click',  function() { cambiar(id, -1); });
+  document.getElementById('bp-' + id).addEventListener('click',  function() { cambiar(id, +1); });
+  document.getElementById('cn-' + id).addEventListener('input',  function() { directo(id, this.value); });
+  document.getElementById('px-' + id).addEventListener('change', function() { setOv(id, this.value); });
+  document.getElementById('px-' + id).addEventListener('focus',  function() { this.select(); });
+}
+
+/* Precios */
+function buildPrecios(el) {
+  var av = document.createElement('div');
+  av.className = 'prec-aviso';
+  av.innerHTML = 'Edita el precio base. El cambio aplica a toda la calculadora. Pulsa <strong>Restablecer</strong> para volver a los originales.';
+  el.appendChild(av);
+
+  var br = document.createElement('button');
+  br.className = 'btn-sec';
+  br.type = 'button';
+  br.style.marginBottom = '4px';
+  br.textContent = 'Restablecer todos los precios';
+  br.addEventListener('click', resetPx);
+  el.appendChild(br);
+
+  for (var ci = 0; ci < CATS.length; ci++) {
+    var c = CATS[ci];
+    if (c.util) continue;
+    var items = [];
+    for (var i = 0; i < S.length; i++) if (S[i].cat === c.id) items.push(S[i]);
+    if (!items.length) continue;
+
+    var sep = document.createElement('div');
+    sep.className = 'grupo-sep';
+    sep.textContent = c.label;
+    el.appendChild(sep);
+
+    for (var ii = 0; ii < items.length; ii++) {
+      (function(s) {
+        var custom = s.px !== DEF[s.id];
+        var row = document.createElement('div');
+        row.className = 'prec-fila';
+        row.id = 'pfila-' + s.id;
+        row.innerHTML =
+          '<div style="flex:1;-webkit-flex:1;min-width:0">' +
+            '<div class="prec-nombre">' + s.nom + '</div>' +
+            '<div class="prec-orig" id="porig-' + s.id + '" style="' + (custom ? '' : 'display:none') + '">' +
+              'Original: $' + DEF[s.id] + '</div>' +
+          '</div>' +
+          '<div class="prec-inp-wrap">' +
+            '<span class="prec-signo">$</span>' +
+            '<input class="prec-inp' + (custom ? ' custom' : '') + '" type="number" inputmode="numeric" min="0"' +
+              ' id="pinp-' + s.id + '" value="' + s.px + '">' +
+          '</div>';
+        el.appendChild(row);
+        document.getElementById('pinp-' + s.id).addEventListener('change', (function(sid) {
+          return function() { setMasterPx(sid, this.value); };
+        })(s.id));
+        document.getElementById('pinp-' + s.id).addEventListener('focus', function() { this.select(); });
+      })(items[ii]);
+    }
+  }
+}
+
+function setMasterPx(id, val) {
+  var n = parseInt(val, 10);
+  if (isNaN(n) || n < 0) return;
+  getSvc(id).px = n;
+  delete ov[id];
+  var inp  = document.getElementById('pinp-'  + id);
+  var orig = document.getElementById('porig-' + id);
+  if (inp)  inp.className = 'prec-inp' + (n !== DEF[id] ? ' custom' : '');
+  if (orig) orig.style.display = (n !== DEF[id]) ? '' : 'none';
+  actuTotal();
+}
+
+function resetPx() {
+  for (var i = 0; i < S.length; i++) S[i].px = DEF[S[i].id];
+  for (var id in ov) delete ov[id];
+  renderContent();
+  actuTotal();
+}
+
+/* Resumen */
+function buildResumen(el) {
+  var sel = [];
+  for (var i = 0; i < S.length; i++) if (qty[S[i].id] > 0) sel.push(S[i]);
+  if (!sel.length) {
+    el.innerHTML = '<div class="res-vacio"><div class="res-icon">&#10024;</div>No hay servicios seleccionados.<br>Agrega desde las otras pestanas.</div>';
+    return;
+  }
+  var totalG = 0, totalQ = 0;
+  for (var ci = 0; ci < CATS.length; ci++) {
+    var c = CATS[ci];
+    if (c.util) continue;
+    var items = [];
+    for (var i = 0; i < sel.length; i++) if (sel[i].cat === c.id) items.push(sel[i]);
+    if (!items.length) continue;
+
+    var hdr = document.createElement('div');
+    hdr.className = 'res-cat-hdr';
+    hdr.textContent = c.label;
+    el.appendChild(hdr);
+
+    for (var ii = 0; ii < items.length; ii++) {
+      var s   = items[ii];
+      var p   = getPx(s.id);
+      var sub = qty[s.id] * p;
+      totalG += sub; totalQ += qty[s.id];
+      var row = document.createElement('div');
+      row.className = 'res-fila';
+      row.innerHTML =
+        '<div style="flex:1;-webkit-flex:1;min-width:0">' +
+          '<div class="res-nombre">' + s.nom + '</div>' +
+          '<div class="res-unit">$' + fmt(p) + ' x ' + qty[s.id] + '</div>' +
+        '</div>' +
+        '<div class="res-sub">$' + fmt(sub) + '</div>';
+      el.appendChild(row);
+    }
+  }
+  var card = document.createElement('div');
+  card.className = 'res-total-card';
+  card.innerHTML =
+    '<div>' +
+      '<div class="res-total-lbl">Total</div>' +
+      '<div class="res-total-info">' + totalQ + ' servicios &middot; ' + sel.length + ' tipos</div>' +
+    '</div>' +
+    '<div class="res-total-monto">$' + fmt(totalG) + '</div>';
+  el.appendChild(card);
+}
+
+/* --- OVERRIDE PRECIO --- */
+function setOv(id, val) {
+  var n = parseInt(val, 10);
+  var s = getSvc(id);
+  if (isNaN(n) || n < 0) return;
+  if (n === s.px) { delete ov[id]; } else { ov[id] = n; }
+  var custom = ov[id] !== undefined;
+  var inp = document.getElementById('px-'  + id);
+  var dot = document.getElementById('dot-' + id);
+  if (inp) inp.className = 'px-inp' + (custom ? ' custom' : '');
+  if (dot) dot.className = 'px-dot' + (custom ? ' on' : '');
+  var sub = document.getElementById('sub-' + id);
+  if (sub) {
+    if (qty[id] === 0) { sub.innerHTML = '&mdash;'; sub.className = 'fila-sub vacio'; }
+    else { sub.textContent = '$' + fmt(qty[id] * getPx(id)); sub.className = 'fila-sub'; }
+  }
+  actuTotal();
+}
+
+/* --- CANTIDAD --- */
+function cambiar(id, d) { setVal(id, Math.max(0, qty[id] + d)); }
+function directo(id, v) { var n = parseInt(v, 10); setVal(id, (isNaN(n) || n < 0) ? 0 : n); }
+
+function setVal(id, v) {
+  qty[id] = v;
+  var p    = getPx(id);
+  var inp  = document.getElementById('cn-'   + id);
+  var sub  = document.getElementById('sub-'  + id);
+  var fila = document.getElementById('fila-' + id);
+  if (inp)  inp.value = v;
+  if (sub) {
+    if (v === 0) { sub.innerHTML = '&mdash;'; sub.className = 'fila-sub vacio'; }
+    else { sub.textContent = '$' + fmt(v * p); sub.className = 'fila-sub'; }
+  }
+  if (fila) fila.className = 'fila' + (v > 0 ? ' on' : '');
+  actuTotal();
+  updBadge(getSvc(id).cat);
+}
+
+/* --- TOTAL --- */
+function actuTotal() {
+  var total = 0, parts = [];
+  for (var i = 0; i < S.length; i++) {
+    if (qty[S[i].id] > 0) {
+      total += qty[S[i].id] * getPx(S[i].id);
+      parts.push(qty[S[i].id] + 'x ' + S[i].nom);
+    }
+  }
+  document.getElementById('tl-monto').textContent = '$' + fmt(total);
+  document.getElementById('tl-res').textContent   = parts.length ? parts.join(' - ') : 'Sin servicios seleccionados';
+}
+
+/* --- LIMPIAR --- */
+function limpiarTodo() {
+  for (var i = 0; i < S.length; i++) { qty[S[i].id] = 0; delete ov[S[i].id]; }
+  renderContent();
+  actuTotal();
+  renderTabs();
+}
+
+/* --- INICIO --- */
+function init() {
+  if (init.ran) return;
+  var btnLimpiar = document.getElementById('btn-limpiar');
+  var tabsWrap   = document.getElementById('tabs-wrap');
+  var contenido  = document.getElementById('content');
+  if (!btnLimpiar || !tabsWrap || !contenido) return;
+  init.ran = true;
+  btnLimpiar.addEventListener('click', limpiarTodo);
+  renderTabs();
+  renderContent();
+}
+init.ran = false;
+init();
+document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('load', init);
+setTimeout(function() { init(); }, 0);
+setTimeout(function() { init(); }, 200);
+</script>
+</body>
+</html>
